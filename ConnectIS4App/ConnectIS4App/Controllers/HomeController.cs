@@ -21,17 +21,6 @@ namespace ConnectIS4App.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
         //Log into Accunet through IS4 server
         public async Task<IActionResult> Login()
         {
@@ -41,21 +30,18 @@ namespace ConnectIS4App.Controllers
             {
                 //Check if token is still active
                 var client = new HttpClient();
-                //var uri = new Uri($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
-                var uri = new Uri($"http://localhost:60003/External/Login?token={accessToken}");
+                var uri = new Uri($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
                 var response = await client.GetAsync(uri);
 
                 //If active redirect with token
                 if (response.IsSuccessStatusCode)
                 {
-                    //return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
-                    return Redirect($"http://localhost:60003/External/Login?token={accessToken}");
+                    return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
                 }
                 else
                 {
                     //refresh access token
-                    var disco = new DiscoveryClient("http://localhost:5000");
-                    //var disco = new DiscoveryClient("https://auth.asc-accunet-dev.com");
+                    var disco = new DiscoveryClient("https://auth.asc-accunet-dev.com");
                     disco.Policy.RequireHttps = false;
                     var discoResponse = await disco.GetAsync();
                     if (discoResponse.IsError) throw new Exception(discoResponse.Error);
@@ -84,8 +70,7 @@ namespace ConnectIS4App.Controllers
                     await HttpContext.SignInAsync("Cookie", info.Principal, info.Properties);
 
                     //login to accunet
-                    //return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
-                    return Redirect($"http://localhost:60003/External/Login?token={accessToken}");
+                    return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
                 }
             }
             else
@@ -103,21 +88,28 @@ namespace ConnectIS4App.Controllers
         {
             var authenticate = await HttpContext.AuthenticateAsync("Cookie");
             var accessToken = authenticate.Ticket.Properties.GetTokenValue("access_token");
-            //return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
-            return Redirect($"http://localhost:60003/External/Login?token={accessToken}");
+            return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
         }
 
+        //View all tokens
         public IActionResult Info()
         {
             return View();
         }
 
+        //Logout of Identity Server
         public IActionResult Logout()
         {
             return SignOut(new AuthenticationProperties
             {
                 RedirectUri = "/Home/Index"
             }, "Cookie", "challenge");
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

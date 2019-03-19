@@ -31,13 +31,6 @@ namespace ConnectIS4App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -45,6 +38,7 @@ namespace ConnectIS4App
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            //Set Authentication
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "Cookie";
@@ -53,18 +47,15 @@ namespace ConnectIS4App
                 .AddCookie("Cookie")
                 .AddOpenIdConnect("challenge", options =>
                 {
-                    //options.Authority = "https://auth.asc-accunet-dev.com";
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = "https://auth.asc-accunet-dev.com";     //this is the development endpoint
                     options.SignInScheme = "Cookie";
-                    options.RequireHttpsMetadata = false;
-                    options.ClientId = "mvc";
-                    options.ClientSecret = "secret";
+                    options.ClientId = "mvc";                                   //development client Id
+                    options.ClientSecret = "secret";                            //developemtn client secret
                     options.ResponseType = "code id_token";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.Scope.Add("offline_access");
                     options.Scope.Add("profile");
-                    //options.Scope.Add("openid");
                     options.Scope.Add("accunet");
 
                 });

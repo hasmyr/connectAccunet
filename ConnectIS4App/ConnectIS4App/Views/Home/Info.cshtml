@@ -1,28 +1,35 @@
 ﻿@using Microsoft.AspNetCore.Authentication
 
 @{
-    var claims = User.Claims;
-    var authenticate = await ViewContext.HttpContext.AuthenticateAsync("Cookie");
-    var at = authenticate.Ticket.Properties.GetTokenValue("access_token");
-    var idt = authenticate.Ticket.Properties.GetTokenValue("id_token");
-    var rt = authenticate.Ticket.Properties.GetTokenValue("refresh_token");
-}
-
-<dt>id_token</dt>
-<dd>@idt</dd>
-
-<dt>access token</dt>
-<dd>@at</dd>
-
-<dt>refresh token</dt>
-<dd>@rt</dd>
-
-<h1>Welcome back @User.Identity.Name</h1>
-<h2>User Claims</h2>
-<dl>
-    @foreach (var claim in User.Claims)
+    try
     {
-        <dt>@claim.Type</dt>
-        <dd>@claim.Value</dd>
+        var claims = User.Claims;
+        var authenticate = await ViewContext.HttpContext.AuthenticateAsync("Cookie");
+        var at = authenticate.Ticket.Properties.GetTokenValue("access_token");
+        var idt = authenticate.Ticket.Properties.GetTokenValue("id_token");
+        var rt = authenticate.Ticket.Properties.GetTokenValue("refresh_token");
+
+        <dt>id_token</dt>
+        <dd>@idt</dd>
+
+        <dt>access token</dt>
+        <dd>@at</dd>
+
+        <dt>refresh token</dt>
+        <dd>@rt</dd>
+
+        <h1>Welcome back @User.Identity.Name</h1>
+        <h2>User Claims</h2>
+        <dl>
+            @foreach (var claim in User.Claims)
+            {
+                <dt>@claim.Type</dt>
+                <dd>@claim.Value</dd>
+            }
+        </dl>
     }
-</dl>
+    catch
+    {
+        <h2>No Identity Tokens</h2>
+    }
+}
