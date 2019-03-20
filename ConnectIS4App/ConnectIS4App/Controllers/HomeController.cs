@@ -70,7 +70,7 @@ namespace ConnectIS4App.Controllers
                     await HttpContext.SignInAsync("Cookie", info.Principal, info.Properties);
 
                     //login to accunet
-                    return Redirect($"http://tenant3.asc-accunet-dev.com/External/Login?token={accessToken}");
+                    return RedirectToAction("Accunet");
                 }
             }
             else

@@ -50,7 +50,7 @@ namespace ConnectIS4App
                     options.Authority = "https://auth.asc-accunet-dev.com";     //this is the development endpoint
                     options.SignInScheme = "Cookie";
                     options.ClientId = "mvc";                                   //development client Id
-                    options.ClientSecret = "secret";                            //developemtn client secret
+                    options.ClientSecret = "secret";                            //development client secret
                     options.ResponseType = "code id_token";
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
